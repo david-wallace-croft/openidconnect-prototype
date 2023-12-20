@@ -18,9 +18,36 @@ use url::Url;
 // Use OpenID Connect Discovery to fetch the provider metadata.
 use openidconnect::{OAuth2TokenResponse, TokenResponse};
 
-pub fn run_prototype() -> Result<(), anyhow::Error> {
+#[derive(Debug)]
+pub struct Input {
+  issuer_url: String,
+}
+
+pub fn load_input_from_env() -> Result<Input, anyhow::Error> {
+  let issuer_url: String = std::env::var("ISSUER_URL")?;
+  let input = Input {
+    issuer_url,
+  };
+  Ok(input)
+}
+
+pub fn load_input_then_run() -> Result<(), anyhow::Error> {
+  let input = load_input_from_env()?;
+  dbg!(&input);
+  run_with_input(input)
+}
+
+pub fn run() {
+  let result = load_input_then_run();
+  match result {
+    Ok(_) => eprintln!("Success"),
+    Err(e) => eprintln!("{e}"),
+  }
+}
+
+pub fn run_with_input(input: Input) -> Result<(), anyhow::Error> {
   println!("Running prototype");
-  // https://cognito-idp.us-east-1.amazonaws.com/us-east-1_25FApjxwv/.well-known/openid-configuration
+  // https://cognito-idp.us-east-1.amazonaws.com/us-east-1_a1b2c3/.well-known/openid-configuration
   let provider_metadata: ProviderMetadata<
     EmptyAdditionalProviderMetadata,
     CoreAuthDisplay,
@@ -38,10 +65,7 @@ pub fn run_prototype() -> Result<(), anyhow::Error> {
     CoreResponseType,
     CoreSubjectIdentifierType,
   > = CoreProviderMetadata::discover(
-    &IssuerUrl::new(
-      "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_25FApjxwv"
-        .to_string(),
-    )?,
+    &IssuerUrl::new(input.issuer_url)?,
     http_client,
   )?;
 
