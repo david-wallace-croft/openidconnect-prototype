@@ -13,20 +13,24 @@ use openidconnect::{
   ClientSecret, CsrfToken, EmptyAdditionalProviderMetadata, IssuerUrl, Nonce,
   PkceCodeChallenge, ProviderMetadata, RedirectUrl, Scope,
 };
-use url::Url;
-
-// Use OpenID Connect Discovery to fetch the provider metadata.
 use openidconnect::{OAuth2TokenResponse, TokenResponse};
+use url::Url;
 
 #[derive(Debug)]
 pub struct Input {
+  client_id: String,
   issuer_url: String,
+  redirect_url: String,
 }
 
 pub fn load_input_from_env() -> Result<Input, anyhow::Error> {
+  let client_id: String = std::env::var("CLIENT_ID")?;
   let issuer_url: String = std::env::var("ISSUER_URL")?;
+  let redirect_url: String = std::env::var("REDIRECT_URL")?;
   let input = Input {
+    client_id,
     issuer_url,
+    redirect_url,
   };
   Ok(input)
 }
@@ -75,12 +79,12 @@ pub fn run_with_input(input: Input) -> Result<(), anyhow::Error> {
   // client secret, authorization URL and token URL.
   let client = CoreClient::from_provider_metadata(
         provider_metadata,
-        ClientId::new("60r0untiiapb0ah88270hovl3d".to_string()),
+        ClientId::new(input.client_id),
         // Some(ClientSecret::new("client_secret".to_string())),
         None,
     )
     // Set the URL the user will be redirected to after the authorization process.
-    .set_redirect_uri(RedirectUrl::new("http://localhost:8080".to_string())?);
+    .set_redirect_uri(RedirectUrl::new(input.redirect_url)?);
 
   // Generate a PKCE challenge.
   let (pkce_challenge, pkce_verifier) = PkceCodeChallenge::new_random_sha256();

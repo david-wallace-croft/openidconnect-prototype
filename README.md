@@ -12,7 +12,9 @@
 - Make a .cargo/config.toml file in the project root for environment variables
   - .cargo is in the .gitignore so the values will not be committed to Git
 ```
+CLIENT_ID = "a1b2c3"
 ISSUER_URL = "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_a1b2c3d4e"
+REDIRECT_URL = "http://localhost:8080/"
 ```
 
 ## Links
