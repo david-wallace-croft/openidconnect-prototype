@@ -3,7 +3,7 @@
 [![MIT licensed][mit-badge]][mit-url]
 
 [mit-badge]: https://img.shields.io/badge/license-MIT-blue.svg
-[mit-url]: https://github.com/david-wallace-croft/dioxus-prototype/blob/main/LICENSE.txt
+[mit-url]: https://github.com/david-wallace-croft/openidconnect-prototype/blob/main/LICENSE.txt
 
 - Prototype of using the crate openidconnect
 
