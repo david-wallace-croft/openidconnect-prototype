@@ -163,5 +163,5 @@ pub fn run_with_input(input: Input) -> Result<(), anyhow::Error> {
   // // See the OAuth2TokenResponse trait for a listing of other available fields such as
   // // access_token() and refresh_token().
 
-  return Ok(());
+  Ok(())
 }
