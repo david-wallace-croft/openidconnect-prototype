@@ -97,8 +97,8 @@ pub fn run_with_input(input: Input) -> Result<(), anyhow::Error> {
             Nonce::new_random,
         )
         // Set the desired scopes.
-        .add_scope(Scope::new("read".to_string()))
-        .add_scope(Scope::new("write".to_string()))
+        // .add_scope(Scope::new("openid".to_string()))
+        // .add_scope(Scope::new("write".to_string()))
         // Set the PKCE code challenge.
         .set_pkce_challenge(pkce_challenge)
         .url();
