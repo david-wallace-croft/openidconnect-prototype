@@ -914,6 +914,7 @@ name = "openidconnect-prototype"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "oauth2",
  "openidconnect",
  "url",
 ]

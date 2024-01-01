@@ -16,5 +16,12 @@ version = "0.1.0"
 
 [dependencies]
 anyhow = "1.0.75"
+oauth2 = "4.4.2"
 openidconnect = "3.4.0"
 url = "2.5.0"
+
+[[bin]]
+name = "main1"
+
+[[bin]]
+name = "main2"
