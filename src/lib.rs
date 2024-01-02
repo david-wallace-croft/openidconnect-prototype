@@ -245,19 +245,31 @@ pub fn run2_with_input(input: &Input) -> Result<(), anyhow::Error> {
     subject, email
   );
 
-  // // If available, we can use the UserInfo endpoint to request additional information.
+  // If available, we can use the UserInfo endpoint to request additional information.
 
-  // // The user_info request uses the AccessToken returned in the token response. To parse custom
-  // // claims, use UserInfoClaims directly (with the desired type parameters) rather than using the
-  // // CoreUserInfoClaims type alias.
-  // let userinfo: CoreUserInfoClaims = client
-  //   .user_info(token_response.access_token().to_owned(), None)
-  //   .map_err(|err| anyhow!("No user info endpoint: {:?}", err))?
+  // The user_info request uses the AccessToken returned in the token response. To parse custom
+  // claims, use UserInfoClaims directly (with the desired type parameters) rather than using the
+  // CoreUserInfoClaims type alias.
+
+  let access_token: AccessToken = token_response.access_token().to_owned();
+
+  let user_info_request = client
+    .user_info(access_token, None)
+    .map_err(|err| anyhow::anyhow!("No user info endpoint: {:?}", err))?;
+
+  // TODO: The following code is failing with this error message:
+  // Failed requesting user info: Parse(Error { path: Path { segments: [] },
+  // original: Error("invalid type: string \"true\", expected a boolean",
+  // line: 1, column: 129) })
+
+  // let userinfo: CoreUserInfoClaims = user_info_request
   //   .request(http_client)
-  //   .map_err(|err| anyhow!("Failed requesting user info: {:?}", err))?;
+  //   .map_err(|err| anyhow::anyhow!("Failed requesting user info: {:?}", err))?;
 
-  // // See the OAuth2TokenResponse trait for a listing of other available fields such as
-  // // access_token() and refresh_token().
+  // dbg!(userinfo);
+
+  // See the OAuth2TokenResponse trait for a listing of other available fields such as
+  // access_token() and refresh_token().
 
   Ok(())
 }
