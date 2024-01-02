@@ -221,17 +221,21 @@ pub fn run2_with_input(input: &Input) -> Result<(), anyhow::Error> {
 
   dbg!(claims);
 
-  // // Verify the access token hash to ensure that the access token hasn't been substituted for
-  // // another user's.
-  // if let Some(expected_access_token_hash) = claims.access_token_hash() {
-  //   let actual_access_token_hash = AccessTokenHash::from_token(
-  //     token_response.access_token(),
-  //     &id_token.signing_alg()?,
-  //   )?;
-  //   if actual_access_token_hash != *expected_access_token_hash {
-  //     return Err(anyhow!("Invalid access token"));
-  //   }
-  // }
+  // Verify the access token hash to ensure that the access token hasn't been substituted for
+  // another user's.
+
+  let access_token_hash_option: Option<&AccessTokenHash> =
+    claims.access_token_hash();
+
+  if let Some(expected_access_token_hash) = access_token_hash_option {
+    let actual_access_token_hash = AccessTokenHash::from_token(
+      token_response.access_token(),
+      &id_token.signing_alg()?,
+    )?;
+    if actual_access_token_hash != *expected_access_token_hash {
+      return Err(anyhow::anyhow!("Invalid access token"));
+    }
+  }
 
   // // The authenticated user's identity is now available. See the IdTokenClaims struct for a
   // // complete listing of the available claims.
