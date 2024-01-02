@@ -237,16 +237,20 @@ pub fn run2_with_input(input: &Input) -> Result<(), anyhow::Error> {
     }
   }
 
-  // // The authenticated user's identity is now available. See the IdTokenClaims struct for a
-  // // complete listing of the available claims.
-  // println!(
-  //   "User {} with e-mail address {} has authenticated successfully",
-  //   claims.subject().as_str(),
-  //   claims
-  //     .email()
-  //     .map(|email| email.as_str())
-  //     .unwrap_or("<not provided>"),
-  // );
+  // The authenticated user's identity is now available. See the IdTokenClaims
+  // struct for a complete listing of the available claims.
+
+  let subject: &str = claims.subject().as_str();
+
+  let email: &str = claims
+    .email()
+    .map(|email| email.as_str())
+    .unwrap_or("<not provided>");
+
+  println!(
+    "User {} with e-mail address {} has authenticated successfully",
+    subject, email
+  );
 
   // // If available, we can use the UserInfo endpoint to request additional information.
 
