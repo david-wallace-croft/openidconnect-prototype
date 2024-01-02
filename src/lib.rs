@@ -42,6 +42,14 @@ type AliasIdToken = IdToken<
   CoreJsonWebKeyType,
 >;
 
+type AliasIdTokenVerifier<'a> = IdTokenVerifier<
+  'a,
+  CoreJwsSigningAlgorithm,
+  CoreJsonWebKeyType,
+  CoreJsonWebKeyUse,
+  CoreJsonWebKey,
+>;
+
 type AliasProviderMetadata = ProviderMetadata<
   EmptyAdditionalProviderMetadata,
   CoreAuthDisplay,
@@ -65,6 +73,7 @@ pub struct Input {
   authorization_code: String,
   client_id: String,
   issuer_url: String,
+  nonce: String,
   pkce_verifier: String,
   redirect_url: String,
 }
@@ -73,12 +82,14 @@ pub fn load_input_from_env() -> Result<Input, anyhow::Error> {
   let authorization_code: String = std::env::var("AUTHORIZATION_CODE")?;
   let client_id: String = std::env::var("CLIENT_ID")?;
   let issuer_url: String = std::env::var("ISSUER_URL")?;
+  let nonce: String = std::env::var("NONCE")?;
   let pkce_verifier: String = std::env::var("PKCE_VERIFIER")?;
   let redirect_url: String = std::env::var("REDIRECT_URL")?;
   let input = Input {
     authorization_code,
     client_id,
     issuer_url,
+    nonce,
     pkce_verifier,
     redirect_url,
   };
@@ -156,7 +167,7 @@ pub fn run1_with_input(input: &Input) -> Result<(), anyhow::Error> {
     PkceCodeChallenge::new_random_sha256();
 
   // Generate the full authorization URL.
-  let (auth_url, _csrf_token, _nonce) = client
+  let (auth_url, _csrf_token, nonce) = client
         .authorize_url(
             CoreAuthenticationFlow::AuthorizationCode,
             CsrfToken::new_random,
@@ -173,6 +184,7 @@ pub fn run1_with_input(input: &Input) -> Result<(), anyhow::Error> {
   // process.
   println!("Browse to: {}", auth_url);
   println!("PKCE Verifier: {}", pkce_verifier.secret());
+  println!("Nonce: {}", nonce.secret());
   Ok(())
 }
 
@@ -201,7 +213,13 @@ pub fn run2_with_input(input: &Input) -> Result<(), anyhow::Error> {
 
   dbg!(id_token);
 
-  // let claims = id_token.claims(&client.id_token_verifier(), &nonce)?;
+  let id_token_verifier: AliasIdTokenVerifier = client.id_token_verifier();
+
+  let nonce = Nonce::new(input.nonce.clone());
+
+  let claims = id_token.claims(&id_token_verifier, &nonce)?;
+
+  dbg!(claims);
 
   // // Verify the access token hash to ensure that the access token hasn't been substituted for
   // // another user's.
