@@ -161,13 +161,9 @@ pub fn run1_with_input(input: &Input) -> Result<(), anyhow::Error> {
 
   let provider_metadata: AliasProviderMetadata = make_provider_metadata(input)?;
   let client: AliasClient = make_client(input, provider_metadata)?;
-
-  // Generate a PKCE challenge.
   let (pkce_challenge, pkce_verifier): (PkceCodeChallenge, PkceCodeVerifier) =
     PkceCodeChallenge::new_random_sha256();
-
-  // Generate the full authorization URL.
-  let (auth_url, _csrf_token, nonce) = client
+  let (authorization_url, _csrf_token, nonce) = client
         .authorize_url(
             CoreAuthenticationFlow::AuthorizationCode,
             CsrfToken::new_random,
@@ -179,12 +175,9 @@ pub fn run1_with_input(input: &Input) -> Result<(), anyhow::Error> {
         // Set the PKCE code challenge.
         .set_pkce_challenge(pkce_challenge)
         .url();
-
-  // This is the URL you should redirect the user to, in order to trigger the authorization
-  // process.
-  println!("Browse to: {}", auth_url);
-  println!("PKCE Verifier: {}", pkce_verifier.secret());
   println!("Nonce: {}", nonce.secret());
+  println!("PKCE Verifier: {}", pkce_verifier.secret());
+  println!("Authorization URL: {}", authorization_url);
   Ok(())
 }
 
