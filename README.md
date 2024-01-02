@@ -6,6 +6,8 @@
 [mit-url]: https://github.com/david-wallace-croft/openidconnect-prototype/blob/main/LICENSE.txt
 
 - Prototype of using the crate openidconnect
+- Adapted from the crate documentation code example
+  - https://docs.rs/openidconnect/latest/openidconnect/
 
 ## Setup
 
